@@ -6,7 +6,7 @@ export default function Content() {
       {/* Left Column - Image */}
       <div className="relative w-full md:w-1/2 min-h-[300px] md:min-h-0">
         <div className="absolute inset-0">
-          <img src="/tatiana.png" alt="AI Assistant" className="w-full h-full object-cover rounded-lg shadow-lg" />
+          <img src="/tati.png" alt="AI Assistant" className="w-full h-full object-cover rounded-lg shadow-lg" />
         </div>
       </div>
 
