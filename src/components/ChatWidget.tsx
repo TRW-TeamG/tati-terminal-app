@@ -1,29 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { apiRequest } from '../utils/api';
 import TypingAnimation from './TypingAnimation';
 import AnimatedText from './AnimatedText';
 
-const SAMPLE_QUESTIONS = [
-  'TaTi, what does my crypto future hold?',
-  'How can I maximize my Solana gains?',
-  'Should I start trading NFTs?',
-];
-
-const TATI_RESPONSES: Record<string, string> = {
-  'TaTi, what does my crypto future hold?':
-    'I see great potential in your crypto journey! The stars align for significant opportunities, especially in the Solana ecosystem. But remember, even the brightest stars need time to shine. ✨',
-  'How can I maximize my Solana gains?':
-    'Focus on building your knowledge first. Look into DeFi protocols, stay updated with ecosystem news, and never invest more than you can afford to lose. The best gains come to those who DYOR! 📚',
-  'Should I start trading NFTs?':
-    'The NFT space is exciting but volatile! Start small, learn about different collections, and build connections in the community. Remember: art is eternal, but prices are temporary! 🎨',
-};
-
 export default function ChatWidget() {
+  const { isAuthenticated, isLoading, signatureRejected, login } = useAuth();
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string; isAnimating?: boolean }[]>(
     []
   );
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [sampleQuestions, setSampleQuestions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    apiRequest('/chat/sample-questions', {
+      method: 'GET',
+      requireAuth: false,
+    })
+      .then((response) => {
+        setSampleQuestions(response.questions);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch sample questions:', error);
+        setSampleQuestions([]);
+      });
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -33,18 +36,33 @@ export default function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
-  const isDisabled = isTyping || messages.some((msg) => msg.isAnimating);
+  const isDisabled = isTyping || messages.some((msg) => msg.isAnimating) || !isAuthenticated;
 
-  const simulateTaTiResponse = async (userMessage: string) => {
-    setIsTyping(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const sendMessage = async (text: string) => {
+    if (!isAuthenticated) {
+      return;
+    }
 
-    const response =
-      TATI_RESPONSES[userMessage] ||
-      "Hmm, that's an interesting question! Let me consult the cosmic charts... 🔮 While I process that, why not explore some of my suggested topics?";
+    try {
+      setMessages((prev) => [...prev, { role: 'user', content: text }]);
+      setIsTyping(true);
 
-    setIsTyping(false);
-    setMessages((prev) => [...prev, { role: 'assistant', content: response, isAnimating: true }]);
+      const response = await apiRequest('/chat/messages', {
+        method: 'POST',
+        body: JSON.stringify({ message: text }),
+        requireAuth: true,
+      });
+
+      setIsTyping(false);
+      setMessages((prev) => [...prev, { role: 'assistant', content: response.message, isAnimating: true }]);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.', isAnimating: true },
+      ]);
+    }
   };
 
   const handleAnimationComplete = (index: number) => {
@@ -53,17 +71,60 @@ export default function ChatWidget() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isDisabled) return;
 
     const userMessage = input;
     setInput('');
-    setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
-    await simulateTaTiResponse(userMessage);
+    await sendMessage(userMessage);
   };
 
-  const handleQuestionClick = (question: string) => {
+  const handleQuestionClick = async (question: string) => {
+    if (!isAuthenticated) {
+      const shouldLogin = window.confirm(
+        'Please connect your wallet to chat with TaTi. Would you like to connect now?'
+      );
+      if (shouldLogin) {
+        await login();
+      }
+      return;
+    }
     setInput(question);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-purple-500 text-xl font-mystical">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+        {signatureRejected ? (
+          <>
+            <p className="text-gray-600 dark:text-gray-300 text-center font-mystical text-xl">
+              Signature was rejected. Please try again to chat with TaTi.
+            </p>
+            <button
+              onClick={() => login()}
+              className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 
+                transition-colors duration-200 font-mystical text-xl shadow-md 
+                hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 
+                focus:ring-offset-2"
+            >
+              Try Again
+            </button>
+          </>
+        ) : (
+          <p className="text-gray-600 dark:text-gray-300 text-center font-mystical text-xl">
+            Please connect your wallet to chat with TaTi
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-lg h-full">
@@ -145,7 +206,7 @@ export default function ChatWidget() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          {SAMPLE_QUESTIONS.map((question, index) => (
+          {sampleQuestions.map((question, index) => (
             <button
               key={index}
               type="button"

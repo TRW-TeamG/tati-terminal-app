@@ -11,6 +11,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
 import Content from './components/Content';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   const network = WalletAdapterNetwork.Devnet;
@@ -21,13 +22,15 @@ function App() {
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow container mx-auto px-4 py-8">
-              <Content />
-            </main>
-            <Footer />
-          </div>
+          <AuthProvider>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow container mx-auto px-4 py-8">
+                <Content />
+              </main>
+              <Footer />
+            </div>
+          </AuthProvider>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
