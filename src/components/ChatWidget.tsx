@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../utils/api';
+import { ChatMessageType, ChatAction, ChatResponse } from '../types/chat';
 import TypingAnimation from './TypingAnimation';
 import AnimatedText from './AnimatedText';
 
@@ -11,22 +12,26 @@ export default function ChatWidget() {
   );
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [sampleQuestions, setSampleQuestions] = useState<string[]>([]);
+  const [chatActions, setChatActions] = useState<ChatAction[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    apiRequest('/chat/sample-questions', {
-      method: 'GET',
-      requireAuth: false,
-    })
-      .then((response) => {
-        setSampleQuestions(response.questions);
+    if (isAuthenticated) {
+      apiRequest('/chat/welcome', {
+        method: 'GET',
+        requireAuth: true,
       })
-      .catch((error) => {
-        console.error('Failed to fetch sample questions:', error);
-        setSampleQuestions([]);
-      });
-  }, []);
+        .then((response: ChatResponse) => {
+          setMessages([{ role: 'assistant', content: response.message, isAnimating: true }]);
+          if (response.actions) {
+            setChatActions(response.actions);
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to fetch welcome message:', error);
+        });
+    }
+  }, [isAuthenticated]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,9 +41,12 @@ export default function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
-  const isDisabled = isTyping || messages.some((msg) => msg.isAnimating) || !isAuthenticated;
+  const isDisabled = useMemo(
+    () => isTyping || messages.some((msg) => msg.isAnimating) || !isAuthenticated,
+    [isTyping, messages, isAuthenticated]
+  );
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (text: string, type: ChatMessageType = ChatMessageType.MESSAGE) => {
     if (!isAuthenticated) {
       return;
     }
@@ -49,12 +57,15 @@ export default function ChatWidget() {
 
       const response = await apiRequest('/chat/messages', {
         method: 'POST',
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ message: text, type }),
         requireAuth: true,
       });
 
       setIsTyping(false);
       setMessages((prev) => [...prev, { role: 'assistant', content: response.message, isAnimating: true }]);
+      if (response.actions) {
+        setChatActions(response.actions);
+      }
     } catch (error) {
       console.error('Failed to send message:', error);
       setIsTyping(false);
@@ -78,7 +89,7 @@ export default function ChatWidget() {
     await sendMessage(userMessage);
   };
 
-  const handleQuestionClick = async (question: string) => {
+  const handleActionClick = async (action: ChatAction) => {
     if (!isAuthenticated) {
       const shouldLogin = window.confirm(
         'Please connect your wallet to chat with TaTi. Would you like to connect now?'
@@ -88,7 +99,7 @@ export default function ChatWidget() {
       }
       return;
     }
-    setInput(question);
+    await sendMessage(action.message, action.type);
   };
 
   if (isLoading) {
@@ -206,11 +217,11 @@ export default function ChatWidget() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          {sampleQuestions.map((question, index) => (
+          {chatActions.map((action, index) => (
             <button
               key={index}
               type="button"
-              onClick={() => handleQuestionClick(question)}
+              onClick={() => handleActionClick(action)}
               disabled={isDisabled}
               className="text-lg px-4 py-2 rounded-full bg-purple-100 text-purple-700 
                 hover:bg-purple-200 dark:bg-gray-700 dark:text-purple-300 
@@ -220,7 +231,7 @@ export default function ChatWidget() {
                 disabled:opacity-50 disabled:cursor-not-allowed 
                 disabled:hover:bg-purple-100 dark:disabled:hover:bg-gray-700"
             >
-              {question}
+              {action.message}
             </button>
           ))}
         </div>
