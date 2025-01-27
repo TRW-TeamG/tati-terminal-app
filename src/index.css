@@ -3,72 +3,32 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --background: 270 20% 98%;
-    --foreground: 270 12% 12%;
-
-    --card: 270 20% 96%;
-    --card-foreground: 270 12% 12%;
-
-    --popover: 270 20% 96%;
-    --popover-foreground: 270 12% 12%;
-
-    --primary: 285 75% 52%;
-    --primary-foreground: 270 20% 98%;
-
-    --secondary: 270 30% 90%;
-    --secondary-foreground: 270 12% 12%;
-
-    --muted: 270 30% 90%;
-    --muted-foreground: 270 12% 45%;
-
-    --accent: 316 75% 60%;
-    --accent-foreground: 270 12% 12%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 270 20% 98%;
-
-    --border: 270 30% 88%;
-    --input: 270 30% 88%;
-    --ring: 285 75% 52%;
-
     --radius: 0.5rem;
   }
-
-  .dark {
-    --background: 270 12% 8%;
-    --foreground: 270 20% 98%;
-
-    --card: 270 12% 12%;
-    --card-foreground: 270 20% 98%;
-
-    --popover: 270 12% 12%;
-    --popover-foreground: 270 20% 98%;
-
-    --primary: 285 75% 58%;
-    --primary-foreground: 270 20% 98%;
-
-    --secondary: 270 12% 16%;
-    --secondary-foreground: 270 20% 98%;
-
-    --muted: 270 12% 16%;
-    --muted-foreground: 270 20% 60%;
-
-    --accent: 316 75% 65%;
-    --accent-foreground: 270 20% 98%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 270 20% 98%;
-
-    --border: 270 12% 16%;
-    --input: 270 12% 16%;
-    --ring: 285 75% 58%;
-  }
 }
-@layer base {
-  * {
-    @apply border-border;
+
+@layer utilities {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--electric-blue) var(--deep-indigo);
   }
-  body {
-    @apply bg-background text-foreground;
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--deep-indigo);
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--electric-blue);
+    border-radius: 4px;
+    border: 2px solid var(--deep-indigo);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--luminous-turquoise);
   }
 }
