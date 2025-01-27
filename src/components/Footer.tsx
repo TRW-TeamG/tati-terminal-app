@@ -1,13 +1,11 @@
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-t from-purple-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-600 dark:text-gray-300">
+    <footer className="bg-deep-indigo text-soft-silver font-opensans">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           {/* Left side - Logo and tagline */}
           <div className="flex flex-col items-center md:items-start">
-            <div className="text-xl font-display font-bold bg-gradient-to-r from-purple-500 to-accent bg-clip-text text-transparent">
-              TaTi
-            </div>
+            <div className="text-xl font-montserrat font-bold text-electric-blue">TaTi</div>
             <p className="text-sm mt-1">Your Neighborly Fortune Teller</p>
           </div>
 
@@ -17,7 +15,7 @@ export default function Footer() {
               href="https://docs.solana.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+              className="text-sm hover:text-electric-blue transition-colors"
             >
               Docs
             </a>
@@ -25,7 +23,7 @@ export default function Footer() {
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+              className="text-sm hover:text-electric-blue transition-colors"
             >
               GitHub
             </a>
@@ -33,7 +31,7 @@ export default function Footer() {
               href="https://discord.gg"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+              className="text-sm hover:text-electric-blue transition-colors"
             >
               Discord
             </a>
@@ -45,7 +43,7 @@ export default function Footer() {
               href="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-purple-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full hover:bg-electric-blue transition-colors"
               aria-label="Twitter"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -56,20 +54,20 @@ export default function Footer() {
               href="https://t.me"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-purple-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full hover:bg-electric-blue transition-colors"
               aria-label="Telegram"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
               </svg>
             </a>
           </div>
         </div>
 
         {/* Bottom - Copyright */}
-        <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm">
+        <div className="mt-8 pt-4 border-t border-hover-grey text-center text-sm">
           <p>© {new Date().getFullYear()} TaTi. All rights reserved.</p>
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Powered by Solana Blockchain</p>
+          <p className="mt-1 text-xs text-hover-grey">Powered by Solana Blockchain</p>
         </div>
       </div>
     </footer>
