@@ -19,7 +19,7 @@ export default function ChatInput({ value, onChange, onSubmit, disabled }: ChatI
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Ask TaTi anything..."
+          placeholder="Ask Tati anything..."
           disabled={disabled}
           className="w-full px-4 pr-12 py-3 rounded-lg border border-hover-grey 
             bg-deep-indigo text-soft-silver focus:outline-none focus:ring-2 

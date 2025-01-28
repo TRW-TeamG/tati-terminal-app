@@ -98,12 +98,6 @@ export default function ChatWidget() {
 
   const handleActionClick = async (action: ChatAction) => {
     if (!isAuthenticated) {
-      const shouldLogin = window.confirm(
-        'Please connect your wallet to chat with TaTi. Would you like to connect now?'
-      );
-      if (shouldLogin) {
-        await login();
-      }
       return;
     }
     await sendMessage(action.message, action.type);
@@ -123,7 +117,7 @@ export default function ChatWidget() {
         {signatureRejected ? (
           <>
             <p className="text-soft-silver text-center font-montserrat text-xl">
-              Signature was rejected. Please try again to chat with TaTi.
+              Signature was rejected. Please try again to chat with Tati.
             </p>
             <button
               onClick={() => login()}
@@ -137,7 +131,7 @@ export default function ChatWidget() {
           </>
         ) : (
           <p className="text-soft-silver text-center font-montserrat text-xl">
-            Please connect your wallet to chat with TaTi
+            Please connect your wallet to chat with Tati
           </p>
         )}
       </div>
@@ -149,7 +143,7 @@ export default function ChatWidget() {
       <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar">
         {messages.length === 0 ? (
           <div className="text-center text-soft-silver mt-8 font-montserrat text-lg italic">
-            Ask TaTi about your crypto future...
+            Ask Tati about your crypto future...
           </div>
         ) : (
           <>

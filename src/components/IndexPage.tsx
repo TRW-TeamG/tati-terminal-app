@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import LegalDisclaimer from './LegalDisclaimer';
+import Roadmap from './Roadmap';
 
 export default function IndexPage() {
   return (
@@ -17,6 +18,9 @@ export default function IndexPage() {
             </a>
             <a href="#insights" className="hover:text-luminous-turquoise hover:underline">
               Insights
+            </a>
+            <a href="#roadmap" className="hover:text-luminous-turquoise hover:underline">
+              Roadmap
             </a>
             <a href="#ca" className="hover:text-luminous-turquoise hover:underline">
               CA
@@ -37,7 +41,7 @@ export default function IndexPage() {
           <div className="container mx-auto text-center py-64 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="text-center">
               <h1 className="text-6xl font-bold mb-4 text-electric-blue font-montserrat">
-                TaTi: The Solana Crypto Oracle
+                Tati: The Solana Crypto Oracle
               </h1>
               <p className="text-2xl mb-8 font-lato">
                 Unlock the secrets of the blockchain with cosmic wisdom and data-driven insights.
@@ -58,9 +62,9 @@ export default function IndexPage() {
         <div className="flex flex-col md:flex-row gap-8 items-center">
           <div className="md:w-1/2">
             <img
-              src="/eyes.jpg"
+              src="/eyes.png"
               alt="Tati's Eyes"
-              className="rounded-lg shadow-lg  w-full h-96 object-cover object-center opacity-60"
+              className="rounded-lg shadow-lg w-full h-96 object-cover object-center opacity-60"
             />
           </div>
           <div className="md:w-1/2">
@@ -74,7 +78,7 @@ export default function IndexPage() {
             </p>
             <p className="mb-4 font-lato text-lg leading-relaxed">
               Tati's creation was an accidental symphony of ancient magic and modern innovation. She was first whispered
-              into existence by a group of techno wizards exploring the intersection of energy fields and computational
+              into existence by a group of techno wizards exploring the intersection of energy fields and compuTational
               data.
             </p>
             <p className="mb-4 font-lato text-lg leading-relaxed">
@@ -112,6 +116,30 @@ export default function IndexPage() {
         </div>
       </section>
 
+      {/* Add Roadmap section before the CA section */}
+      <Roadmap />
+
+      {/* CA Section */}
+      <section id="ca" className="container mx-auto py-16 px-6">
+        <h2 className="text-4xl font-bold text-electric-blue mb-8 text-center font-montserrat">Token Details</h2>
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="bg-deep-indigo p-8 rounded-lg border border-electric-blue">
+            <p className="text-xl font-montserrat text-luminous-turquoise mb-4">Token Coming Soon</p>
+            <p className="font-lato text-lg leading-relaxed mb-4">
+              The Tati token is not yet live. Stay tuned for the official launch announcement and contract address.
+            </p>
+            <div className="flex justify-center">
+              <button
+                className="bg-electric-blue hover:bg-luminous-turquoise text-deep-indigo font-bold py-2 px-6 rounded-md transition-colors"
+                onClick={() => window.open('https://x.com/tati_terminal', '_blank')}
+              >
+                Join Waiting List
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action */}
       <div className="container mx-auto py-16 text-center">
         <Link to="/app">
@@ -129,7 +157,12 @@ export default function IndexPage() {
       {/* Footer */}
       <footer className="bg-deep-indigo py-4 text-center">
         <div className="container mx-auto space-x-4 flex justify-center items-center">
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-hover-grey">
+          <a
+            href="https://x.com/tati_terminal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-hover-grey"
+          >
             Twitter
           </a>
           <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="hover:text-hover-grey">

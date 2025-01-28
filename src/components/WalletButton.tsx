@@ -1,9 +1,6 @@
-import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 export default function WalletButton() {
-  const { wallet } = useWallet();
-
   return (
     <WalletMultiButton
       className="px-4 py-2 font-montserrat text-sm bg-luminous-turquoise text-deep-indigo rounded-lg 

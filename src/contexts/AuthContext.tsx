@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import bs58 from 'bs58';
+import { jwtDecode } from 'jwt-decode';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,13 +14,35 @@ interface AuthContextType {
   signatureRejected: boolean;
 }
 
+interface JwtPayload {
+  exp: number;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [signatureRejected, setSignatureRejected] = useState(false);
-  const { publicKey, signMessage, connected } = useWallet();
+  const { publicKey, signMessage, connected, disconnecting } = useWallet();
+
+  const isTokenExpired = useCallback((token: string) => {
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      return decoded.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  }, []);
+
+  const setAndStoreToken = useCallback((token: string | null) => {
+    setAuthToken(token);
+    if (token) {
+      localStorage.setItem('authToken', token);
+    } else {
+      localStorage.removeItem('authToken');
+    }
+  }, []);
 
   const login = useCallback(async () => {
     if (!publicKey || !signMessage) {
@@ -48,7 +71,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         signature = await signMessage(encodedMessage);
       } catch (error) {
-        console.log('User rejected signature request');
         setSignatureRejected(true);
         return;
       }
@@ -66,42 +88,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       const { token } = await verifyResponse.json();
-      setAuthToken(token);
-      localStorage.setItem('authToken', token);
+      setAndStoreToken(token);
     } catch (error) {
       console.error('Authentication failed:', error);
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, [publicKey, signMessage]);
+  }, [publicKey, signMessage, isTokenExpired, setAndStoreToken]);
 
   const logout = useCallback(() => {
-    setAuthToken(null);
+    setAndStoreToken(null);
     setSignatureRejected(false);
-    localStorage.removeItem('authToken');
-  }, []);
+  }, [setAndStoreToken]);
 
   // Handle wallet connection/disconnection
   useEffect(() => {
-    if (connected && !authToken && !isLoading && !signatureRejected) {
-      login().catch((error) => {
-        if (error) {
-          console.error('Login failed:', error);
-        }
-      });
-    } else if (!connected) {
+    if (!connected) {
+      return;
+    }
+
+    if (!isLoading && !signatureRejected) {
+      const savedToken = localStorage.getItem('authToken');
+      if (!savedToken || isTokenExpired(savedToken)) {
+        login().catch(console.error);
+      } else {
+        setAndStoreToken(savedToken);
+      }
+    }
+  }, [connected, login, isLoading, signatureRejected, isTokenExpired, setAndStoreToken]);
+
+  // Check if wallet is disconnecting
+  useEffect(() => {
+    if (disconnecting) {
       logout();
     }
-  }, [connected, authToken, login, logout, isLoading, signatureRejected]);
+  }, [disconnecting, logout]);
 
   // Check for existing token on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('authToken');
-    if (savedToken) {
-      setAuthToken(savedToken);
+    if (savedToken && !isTokenExpired(savedToken)) {
+      setAndStoreToken(savedToken);
+    } else if (savedToken) {
+      setAndStoreToken(null);
     }
-  }, []);
+  }, [isTokenExpired, setAndStoreToken]);
 
   return (
     <AuthContext.Provider
