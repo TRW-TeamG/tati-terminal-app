@@ -20,7 +20,7 @@ export default function Footer() {
               Docs
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/TRW-TeamG/tati-lore"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm hover:text-electric-blue transition-colors"
@@ -44,7 +44,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-full hover:bg-electric-blue transition-colors group"
-              aria-label="Twitter"
+              aria-label="X"
             >
               <img
                 src="https://cdn.simpleicons.org/x/F5F5F5"
