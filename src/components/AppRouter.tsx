@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import IndexPage from './IndexPage';
-import AppContent from './AppContent';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+
+import AppContent from './AppContent'
+import IndexPage from './IndexPage'
 
 export default function AppRouter() {
   return (
@@ -10,5 +11,5 @@ export default function AppRouter() {
         <Route path="/app" element={<AppContent />} />
       </Routes>
     </Router>
-  );
+  )
 }
