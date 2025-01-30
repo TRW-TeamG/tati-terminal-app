@@ -1,6 +1,5 @@
 import type { UmiPlugin } from '@metaplex-foundation/umi'
 import { httpDownloader } from '@metaplex-foundation/umi-downloader-http'
-import { fetchHttp } from '@metaplex-foundation/umi-http-fetch'
 import { defaultProgramRepository } from '@metaplex-foundation/umi-program-repository'
 import { ChunkGetAccountsRpcOptions, chunkGetAccountsRpc } from '@metaplex-foundation/umi-rpc-chunk-get-accounts'
 import { Web3JsRpcOptions, web3JsRpc } from '@metaplex-foundation/umi-rpc-web3js'
@@ -21,7 +20,6 @@ export function defaultPlugins(
     install(umi) {
       umi.use(dataViewSerializer())
       umi.use(defaultProgramRepository())
-      umi.use(fetchHttp())
       umi.use(httpDownloader())
       umi.use(web3JsEddsa())
       umi.use(

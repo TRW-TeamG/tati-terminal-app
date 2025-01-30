@@ -20,7 +20,7 @@ const CLUSTER_RPC: Record<ClusterType, ClusterSettings> = {
     priority: 10_000,
   },
   mainnet: {
-    rpc: process.env.VITE_SOLANA_MAINNET_RPC || 'https://api.mainnet-beta.solana.com',
+    rpc: import.meta.env.VITE_SOLANA_MAINNET_RPC || 'https://api.mainnet-beta.solana.com',
     commitment: 'processed',
     priority: 10_000,
   },
