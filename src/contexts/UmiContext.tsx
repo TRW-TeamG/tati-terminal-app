@@ -1,9 +1,10 @@
 import { mplToolbox } from '@metaplex-foundation/mpl-toolbox'
-import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { walletAdapterIdentity } from '@metaplex-foundation/umi-signer-wallet-adapters'
 import { ReactNode, useMemo } from 'react'
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+
+import { createUmi } from '@/lib/umi/createUmi'
 
 import { UmiContext } from './useUmi'
 
