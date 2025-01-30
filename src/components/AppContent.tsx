@@ -1,39 +1,44 @@
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { clusterApiUrl } from '@solana/web3.js';
-import { useMemo } from 'react';
-import Header from './Header';
-import Footer from './Footer';
-import Content from './Content';
-import { AuthProvider } from '../contexts/AuthContext';
-import LegalDisclaimer from './LegalDisclaimer';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 // Import wallet adapter CSS
-import '@solana/wallet-adapter-react-ui/styles.css';
+import '@solana/wallet-adapter-react-ui/styles.css'
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets'
+
+import { ClusterSettings } from '@/config'
+import { UmiProvider } from '@/contexts/UmiContext'
+
+import { AuthProvider } from '../contexts/AuthContext'
+import Content from './Content'
+import Footer from './Footer'
+import Header from './Header'
+import LegalDisclaimer from './LegalDisclaimer'
 
 export default function AppContent() {
-  const network = WalletAdapterNetwork.Mainnet;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
-
+  const wallets = useMemo(() => [new PhantomWalletAdapter()], [])
+  const queryClient = new QueryClient()
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          <AuthProvider>
-            <div className="flex flex-col min-h-screen bg-deep-indigo">
-              <Header />
-              <main className="flex-grow container mx-auto px-4 py-8">
-                <Content />
-                <LegalDisclaimer className="mt-8" />
-              </main>
-              <Footer />
-            </div>
-          </AuthProvider>
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
-  );
+    <QueryClientProvider client={queryClient}>
+      <ConnectionProvider endpoint={ClusterSettings.rpc}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            <UmiProvider>
+              <AuthProvider>
+                <div className="flex flex-col min-h-screen bg-deep-indigo">
+                  <Header />
+                  <main className="flex-grow container mx-auto px-4 py-8">
+                    <Content />
+                    <LegalDisclaimer className="mt-8" />
+                  </main>
+                  <Footer />
+                </div>
+              </AuthProvider>
+            </UmiProvider>
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </QueryClientProvider>
+  )
 }
