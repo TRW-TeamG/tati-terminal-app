@@ -1,114 +1,118 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { apiRequest } from '../utils/api';
-import { ChatMessageType, ChatAction, ChatResponse } from '../types/chat';
-import TypingAnimation from './TypingAnimation';
-import ChatMessage from './chat/ChatMessage';
-import ChatActions from './chat/ChatActions';
-import ChatInput from './chat/ChatInput';
+import { useEffect, useMemo, useRef, useState } from 'react'
+
+import { useUnrewarded } from '@/rpc/asset/hooks'
+
+import { useAuth } from '../contexts/AuthContext'
+import { ChatAction, ChatMessageType, ChatResponse } from '../types/chat'
+import { apiRequest } from '../utils/api'
+import TypingAnimation from './TypingAnimation'
+import ChatActions from './chat/ChatActions'
+import ChatInput from './chat/ChatInput'
+import ChatMessage from './chat/ChatMessage'
 
 export default function ChatWidget() {
-  const { isAuthenticated, isLoading, signatureRejected, login } = useAuth();
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string; isAnimating?: boolean }[]>(
-    []
-  );
-  const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [chatActions, setChatActions] = useState<ChatAction[]>([]);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated, isLoading, signatureRejected, login } = useAuth()
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string; isAnimating?: boolean }[]>([])
+  const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [chatActions, setChatActions] = useState<ChatAction[]>([])
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+
+  const { refetch: refetchUnrewarded } = useUnrewarded()
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchWelcomeMessage();
+      fetchWelcomeMessage()
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated])
 
   const fetchWelcomeMessage = async () => {
     try {
       const response: ChatResponse = await apiRequest('/chat/welcome', {
         method: 'GET',
         requireAuth: true,
-      });
-      setMessages([{ role: 'assistant', content: response.message, isAnimating: true }]);
+      })
+      setMessages([{ role: 'assistant', content: response.message, isAnimating: true }])
       if (response.actions) {
-        setChatActions(response.actions);
+        setChatActions(response.actions)
       }
     } catch (error) {
-      console.error('Failed to fetch welcome message:', error);
+      console.error('Failed to fetch welcome message:', error)
     }
-  };
+  }
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
-  };
+  }
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages.length, isTyping]);
+    scrollToBottom()
+  }, [messages.length, isTyping])
 
   const handleTextUpdate = () => {
-    scrollToBottom();
-  };
+    scrollToBottom()
+  }
 
   const isDisabled = useMemo(
     () => isTyping || messages.some((msg) => msg.isAnimating) || !isAuthenticated,
     [isTyping, messages, isAuthenticated]
-  );
+  )
 
   const sendMessage = async (text: string, type: ChatMessageType = ChatMessageType.MESSAGE) => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) return
 
     try {
-      setMessages((prev) => [...prev, { role: 'user', content: text }]);
-      setIsTyping(true);
+      setMessages((prev) => [...prev, { role: 'user', content: text }])
+      setIsTyping(true)
 
       const response = await apiRequest('/chat/messages', {
         method: 'POST',
         body: JSON.stringify({ message: text, type }),
         requireAuth: true,
-      });
+      })
 
-      setIsTyping(false);
-      setMessages((prev) => [...prev, { role: 'assistant', content: response.message, isAnimating: true }]);
+      setIsTyping(false)
+      setMessages((prev) => [...prev, { role: 'assistant', content: response.message, isAnimating: true }])
       if (response.actions) {
-        setChatActions(response.actions);
+        setChatActions(response.actions)
       }
+      void refetchUnrewarded()
     } catch (error) {
-      console.error('Failed to send message:', error);
-      setIsTyping(false);
+      console.error('Failed to send message:', error)
+      setIsTyping(false)
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.', isAnimating: true },
-      ]);
+      ])
     }
-  };
+  }
 
   const handleAnimationComplete = (index: number) => {
-    setMessages((prev) => prev.map((msg, i) => (i === index ? { ...msg, isAnimating: false } : msg)));
-  };
+    setMessages((prev) => prev.map((msg, i) => (i === index ? { ...msg, isAnimating: false } : msg)))
+  }
 
   const handleSubmit = () => {
-    if (!input.trim() || isDisabled) return;
-    const userMessage = input;
-    setInput('');
-    sendMessage(userMessage);
-  };
+    if (!input.trim() || isDisabled) return
+    const userMessage = input
+    setInput('')
+    sendMessage(userMessage)
+  }
 
   const handleActionClick = async (action: ChatAction) => {
     if (!isAuthenticated) {
-      return;
+      return
     }
-    await sendMessage(action.message, action.type);
-  };
+    await sendMessage(action.message, action.type)
+  }
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-soft-silver text-xl font-montserrat">Loading...</div>
       </div>
-    );
+    )
   }
 
   if (!isAuthenticated) {
@@ -135,7 +139,7 @@ export default function ChatWidget() {
           </p>
         )}
       </div>
-    );
+    )
   }
 
   return (
@@ -170,5 +174,5 @@ export default function ChatWidget() {
 
       <ChatActions actions={chatActions} onActionClick={handleActionClick} disabled={isDisabled} />
     </div>
-  );
+  )
 }

@@ -67,41 +67,37 @@ export default function RewardButton() {
       })
     }
   }
+
   return (
     <button
       onClick={() => {
         void handleMint()
       }}
       disabled={!hasRewards || isLoading || minting}
-      className={`relative px-4 py-2 rounded-lg font-montserrat text-sm 
-        transition-all duration-300 group
-        ${
-          hasRewards
-            ? 'bg-electric-blue text-deep-indigo hover:bg-luminous-turquoise animate-pulse'
-            : 'bg-deep-indigo text-soft-silver opacity-50 cursor-not-allowed'
-        }
+      className={`
+        px-4 py-2 rounded-lg font-montserrat text-sm 
+        text-electric-blue hover:text-luminous-turquoise
+        transition-colors duration-200
+        ${hasRewards ? '' : 'opacity-50 cursor-not-allowed'}
       `}
     >
-      {/* Sparkle effect */}
-      {hasRewards && (
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-0 w-2 h-2 bg-luminous-turquoise rounded-full animate-ping" />
-          <div className="absolute top-0 right-0 w-2 h-2 bg-luminous-turquoise rounded-full animate-ping delay-100" />
-          <div className="absolute bottom-0 left-0 w-2 h-2 bg-luminous-turquoise rounded-full animate-ping delay-200" />
-          <div className="absolute bottom-0 right-0 w-2 h-2 bg-luminous-turquoise rounded-full animate-ping delay-300" />
-        </div>
-      )}
-
-      {/* Content */}
       <div className="flex items-center gap-2">
-        <span>{isLoading ? 'Loading...' : `Claim Rewards ${unrewardedCount > 0 ? `(${unrewardedCount})` : ''}`}</span>
-        {hasRewards && (
-          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-              fill="currentColor"
-            />
-          </svg>
+        {isLoading ? (
+          <span>Loading...</span>
+        ) : minting ? (
+          <span className="flex items-center gap-2">✨ Manifesting...</span>
+        ) : (
+          <span className="flex items-center gap-2">
+            {hasRewards ? (
+              <>
+                ✨ <span>Claim Celestial Shard</span> ✨
+              </>
+            ) : (
+              <>
+                <span>No Rewards</span>
+              </>
+            )}
+          </span>
         )}
       </div>
     </button>

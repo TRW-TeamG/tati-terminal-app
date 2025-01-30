@@ -14,30 +14,16 @@ export type LinkResult = {
 }
 
 export class Explorer {
-  public Uri = 'https://solana.fm'
+  public Uri = 'https://explorer.solana.com'
   public cluster?: ClusterType
 
   constructor(cluster?: ClusterType) {
     this.cluster = cluster
   }
 
-  // This is stupid hack to get around the fact that solana.fm has different names for the clusters
-  // need to refactor this to be able to switch between different explorers
-  private _cluster() {
-    switch (this.cluster) {
-      case 'custom':
-        return 'localnet-solana'
-      case 'devnet':
-        return 'devnet-alpha'
-      case 'mainnet':
-      default:
-        return undefined
-    }
-  }
-
   private _link(entity: string, type: LinkType): string {
     const result = `${this.Uri}/${type}/${entity}`
-    return this._cluster() ? `${result}?cluster=${this._cluster()}` : result
+    return this.cluster ? `${result}?cluster=${this.cluster}` : result
   }
 
   address(entity?: PublicKey | string): LinkResult {

@@ -2,7 +2,7 @@ import { createV2 } from '@metaplex-foundation/mpl-core'
 import { setComputeUnitPrice } from '@metaplex-foundation/mpl-toolbox'
 import { Umi, generateSigner, transactionBuilder } from '@metaplex-foundation/umi'
 
-import { ASSET_PLACEHOLDER_URI, ClusterSettings } from '@/config'
+import { ASSET_AUTHORITY, ASSET_PLACEHOLDER_URI, ClusterSettings } from '@/config'
 
 // Mint Asset
 export const mintAsset = (umi: Umi) => {
@@ -19,8 +19,9 @@ export const mintAsset = (umi: Umi) => {
   tb = tb.add(
     createV2(umi, {
       asset: asset,
-      name: 'Test Asset',
+      name: 'Celestial Shard',
       uri: ASSET_PLACEHOLDER_URI,
+      updateAuthority: ASSET_AUTHORITY,
     })
   )
 
